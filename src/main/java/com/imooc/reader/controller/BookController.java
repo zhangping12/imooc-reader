@@ -18,7 +18,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Controller
-public class BookContoller {
+public class BookController {
     @Resource
     private CategoryService categoryService;
     @Resource
