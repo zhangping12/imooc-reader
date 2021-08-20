@@ -20,13 +20,25 @@ public class BookServiceImpl implements BookService {
     private BookMapper bookMapper;
     /**
      * 分页查询图书
+     * @param  categoryId 分类编号
+     * @param order 排序方式
      * @param page 页号
      * @param rows 每页记录数
      * @return     分页对象
      */
-    public IPage<Book> paging(Integer page, Integer rows) {
+    public IPage<Book> paging(Long categoryId,String order,Integer page, Integer rows) {
         Page<Book> p = new Page<Book>(page,rows);
         QueryWrapper<Book> queryWrapper = new QueryWrapper<Book>();
+        if(categoryId!=null&&categoryId!=-1){
+            queryWrapper.eq("category_id",categoryId);
+        }
+        if(order!=null){
+            if("quantity".equals(order)){
+                queryWrapper.orderByDesc("evaluation_quantity");
+            }else if("score".equals(order)){
+                queryWrapper.orderByDesc("evaluation_score");
+            }
+        }
         Page<Book> pageObject = bookMapper.selectPage(p, queryWrapper);
         return pageObject;
     }
