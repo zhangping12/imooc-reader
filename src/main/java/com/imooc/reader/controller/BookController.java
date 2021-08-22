@@ -1,7 +1,6 @@
 package com.imooc.reader.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imooc.reader.entity.*;
 import com.imooc.reader.service.BookService;
 import com.imooc.reader.service.CategoryService;
