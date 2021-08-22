@@ -49,6 +49,69 @@
         $(function () {
             $(".stars").raty({readOnly: true});
         })
+
+        $(function(){
+            <#if memberReadState ??>
+                $("*[data-read-state='${memberReadState.readState}']").addClass("highlight");
+            </#if>
+            <#if !loginMember ??>
+                $("*[data-read-state],#btnEvaluation,*[data-evaluation-id]").click(function(){
+                    //未登录情况下提示"需要登录"
+                    $("#exampleModalCenter").modal("show");
+                })
+            </#if>
+            <#if loginMember??>
+                $("*[data-read-state]").click(function(){
+                    var readState = $(this).data("read-state");
+                    //下面是简化版的ajax方法
+                    $.post("/update_read_state",{
+                        memberId:${loginMember.memberId},
+                        bookId:${book.bookId},
+                        readState:readState
+                    },function(json){
+                        if(json.code == "0"){
+                            $("*[data-read-state]").removeClass("highlight");
+                            $("*[data-read-state='"+readState+"']").addClass("highlight");
+                        }
+                    },"json")
+                })
+
+            $("#btnEvaluation").click(function(){
+                $("#score").raty({});//转换为星型组件
+                $("#dlgEvaluation").modal("show");
+            })
+
+            //评论对话框提交数据
+            $("#btnSubmit").click(function(){
+                var score = $("#score").raty("score");//获取评分
+                var content = $("#content").val();
+                if(score == 0||$.trim(content)==""){
+                    return;
+                }
+                $.post("/evaluate",{
+                    score:score,
+                    bookId:${book.bookId},
+                    memberId: ${loginMember.memberId},
+                    content:content
+                },function (json) {
+                    if(json.code == "0"){
+                        window.location.reload();//刷新当前页面
+                    }
+                },"json")
+            })
+            //评论点赞
+            $("*[data-evaluation-id]").click(function(){
+                var evaluationId = $(this).data("evaluation-id");
+                $.post("/enjoy",{
+                    evaluationId:evaluationId
+                },function(json){
+                    if(json.code=="0"){
+                        $("*[data-evaluation-id='"+evaluationId+"'] span").text(json.evaluation.enjoy);
+                    }
+                },"json")
+            })
+            </#if>
+        })
     </script>
 </head>
 <body>
@@ -124,8 +187,8 @@
                     <span class="pt-1 small text-black-50 mr-2">${evaluation.createTime?string('MM-dd')}</span>
                     <span class="mr-2 small pt-1">${evaluation.member.nickname}</span>
                     <span class="stars mr-2" data-score="${evaluation.score}"></span>
-
-                    <button type="button" data-evaluation-id="${evaluation.evaluationId}"
+<#--由于千位以上的数字会被格式化为带逗号的格式，例如1000会显示为1,000造成无法转换成long类型，这里可以改为${evaluation.evaluationId?c}解决该问题-->
+                    <button type="button" data-evaluation-id="${evaluation.evaluationId?c}"
                             class="btn btn-success btn-sm text-white float-right" style="margin-top: -3px;">
                         <img style="width: 24px;margin-top: -5px;" class="mr-1"
                              src="https://img3.doubanio.com/f/talion/7a0756b3b6e67b59ea88653bc0cfa14f61ff219d/pics/card/ic_like_gray.svg"/>
@@ -163,7 +226,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <h6>为"从 0 开始学爬虫"写短评</h6>
+                <h6>为"${book.bookName}"写短评</h6>
                 <form id="frmEvaluation">
                     <div class="input-group  mt-2 ">
                         <span id="score"></span>
