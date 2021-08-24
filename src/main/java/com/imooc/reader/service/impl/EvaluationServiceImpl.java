@@ -1,6 +1,8 @@
 package com.imooc.reader.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.imooc.reader.entity.Book;
 import com.imooc.reader.entity.Evaluation;
 import com.imooc.reader.entity.Member;
@@ -42,5 +44,45 @@ public class EvaluationServiceImpl implements EvaluationService {
             eva.setBook(book);
         }
         return evaluationList;
+    }
+
+    /**
+     * 分页查询短评
+     * @param page 页号
+     * @param rows 每页记录数
+     * @return     分页对象
+     */
+    public IPage<Evaluation> paging(Integer page, Integer rows) {
+        Page<Evaluation> p = new Page<Evaluation>(page,rows);
+        QueryWrapper<Evaluation> queryWrapper = new QueryWrapper<Evaluation>();
+        Page<Evaluation> pageObject = evaluationMapper.selectPage(p, queryWrapper);
+        for(Evaluation eva:pageObject.getRecords()){
+            Member member = memberMapper.selectById(eva.getMemberId());
+            Book book = bookMapper.selectById((eva.getBookId()));
+            eva.setMember(member);
+            eva.setBook(book);
+        }
+        return pageObject;
+    }
+
+    /**
+     * 根据评论编号查询评论
+     * @param evaluationId
+     * @return
+     */
+    public Evaluation selectByEvaluationId(Long evaluationId) {
+        Evaluation evaluation = evaluationMapper.selectById(evaluationId);
+        return evaluation;
+    }
+
+    /**
+     * 更新评论禁用
+     * @param evaluation
+     * @return
+     */
+    public Evaluation updateEvaluation(Evaluation evaluation) {
+        evaluationMapper.updateById(evaluation);
+
+        return evaluation;
     }
 }

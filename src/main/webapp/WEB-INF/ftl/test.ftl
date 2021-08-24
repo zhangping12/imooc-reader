@@ -15,6 +15,8 @@
      <script>
         var E = window.wangEditor;
         var editor = new E("#divEditor");//完成富文本编辑器的初始化
+        editor.customConfig.uploadImgServer = '/management/book/upload' //设置图片上传路径
+        editor.customConfig.uploadFileName = 'img'; //图片上传时的参数名
         editor.create();//创建富文本编辑器，显示在页面上
          document.getElementById("btnRead").onclick=function(){
              var content =editor.txt.html();//获取编辑器现有的html内容

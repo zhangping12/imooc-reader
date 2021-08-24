@@ -119,7 +119,6 @@
 
         var bookId = $(obj).data("id"); //获取"修改"按钮附带的图书编号
         $("#dlgBook #bookId").val(bookId); //为表单隐藏域赋值,提交表单时用到
-
         editor = new wangEditor('#dlgBook #editor'); //初始化富文本编辑器
         editor.customConfig.uploadImgServer = '/management/book/upload' //设置图片上传路径
         editor.customConfig.uploadFileName = 'img'; //图片上传时的参数名
