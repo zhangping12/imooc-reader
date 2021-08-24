@@ -49,7 +49,7 @@ public class MEvaluationController {
 
     @PostMapping("/disable")
     @ResponseBody
-    public Map disable(Long evaluationId,String reason){
+    public Map changeState(Long evaluationId,String reason){
         Map result = new HashMap();
         try {
             Evaluation rawevaluation = evaluationService.selectByEvaluationId(evaluationId);
