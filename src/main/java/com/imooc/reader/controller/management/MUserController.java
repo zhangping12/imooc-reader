@@ -49,7 +49,8 @@ public class MUserController {
      * @return
      */
     @GetMapping("/logout")
-    public ModelAndView logout(){
+    public ModelAndView logout(HttpSession session){
+        session.removeAttribute("loginUser");
         return new ModelAndView("management/login");
     }
 }
